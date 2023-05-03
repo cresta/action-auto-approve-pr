@@ -20,15 +20,15 @@ ARGS_TO_EXEC+=("--approve")
 if [ -n "${PR_NUMBER}" ]; then
   ARGS_TO_EXEC+=("${PR_NUMBER}")
 else
-  # Extract the branch name from the ref
-  BRANCH_NAME=$(echo "${GITHUB_REF}" | sed -e "s/refs\/heads\///g")
-  # Verify the branch name is not empty
-  if [ -z "${BRANCH_NAME}" ]; then
-    echo "Branch name could not be determined. Exiting..."
+  # If the branch name looks like "refs/pull/ID/merge", extract the ID part
+  PR_NUMBER=$(echo "${GITHUB_REF}" | sed -n -e "s/refs\/pull\/\([0-9]*\)\/merge/\1/p")
+  # Verify the PR number is not empty
+  if [ -z "${PR_NUMBER}" ]; then
+    echo "PR number could not be determined. Exiting..."
     exit 1
   fi
-  # Add branch name to review command
-  ARGS_TO_EXEC+=("${BRANCH_NAME}")
+  # Add the PR number to the args
+  ARGS_TO_EXEC+=("${PR_NUMBER}")
 fi
 
 gh pr review "${ARGS_TO_EXEC[@]}"
