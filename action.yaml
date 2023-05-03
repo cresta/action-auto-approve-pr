@@ -1,0 +1,26 @@
+name: 'action-auto-approve-pr'
+description: 'Uses cresta-robot token to auto approve renovate PRs'
+inputs:
+  token:
+    description: The user token that will approve the PR.  Usually secrets.CRESTA_ROBOT_AUTO_APPROVE_TOKEN
+    required: true
+  pr-number:
+    description: An explicit PR number to approve.  If not provided, the action will attempt to find the PR number from the current branch name.
+    required: false
+  required-author:
+    description: The author that must be present on the PR.  If not provided, the action will not check the author.
+    required: false
+    default: app/self-hosted-renovatebot
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install github CLI
+      uses: cresta/action-setup-github-cli@v1
+    - name: Approve the PR
+      if: github.event_name == 'pull_request' && github.event.action == 'opened' && ( !inputs.required-author || github.event.pull_request.user.login == inputs.required-author )
+      run: ${{ github.action_path }}/approve_pr.sh
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.token }}
+        PR_NUMBER: ${{ inputs.pr-number }}
