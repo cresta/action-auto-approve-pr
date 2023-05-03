@@ -7,6 +7,12 @@ inputs:
   pr-number:
     description: An explicit PR number to approve.  If not provided, the action will attempt to find the PR number from the current branch name.
     required: false
+    default: ""
+  body:
+    description: The body of the comment to leave on the PR.  Defaults to "Auto approved by cresta-robot"
+    required: false
+    default: "Auto approved by cresta-robot"
+
 
 runs:
   using: "composite"
@@ -19,3 +25,4 @@ runs:
       env:
         GITHUB_TOKEN: ${{ inputs.token }}
         PR_NUMBER: ${{ inputs.pr-number }}
+        INPUT_BODY: ${{ inputs.body }}
