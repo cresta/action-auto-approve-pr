@@ -14,7 +14,7 @@ runs:
     - name: Install github CLI
       uses: cresta/action-setup-github-cli@v1
     - name: Approve the PR
-      run: ${{ github.action_path }}/approve_pr.sh
+      run: ${{ github.action_path }}/approve-pr.sh
       shell: bash
       env:
         GITHUB_TOKEN: ${{ inputs.token }}
